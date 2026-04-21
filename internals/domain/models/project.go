@@ -1,9 +1,13 @@
 package models
 
+import "time"
+
 type Project struct {
 	Id          int
-	UserID      int
+	UserId      int
 	Name        string
 	Description string
 	Options     string //Extra details
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

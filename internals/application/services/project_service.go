@@ -28,3 +28,18 @@ func (ps *ProjectService) ListProjects(userID int) ([]models.Project, error) {
 	ps.serviceLoger.Info("Listing projects for user: ", ports.Field{Key: "userID", Value: userID})
 	return ps.projectRespository.GetByUserId(userID)
 }
+
+func (ps *ProjectService) Delete(projectId int) error {
+	ps.serviceLoger.Info("Deleting project")
+	return ps.projectRespository.Delete(projectId)
+}
+
+func (ps *ProjectService) GetById(projectId int) (*models.Project, error) {
+	ps.serviceLoger.Info("Getting by ID")
+	return ps.projectRespository.GetById(projectId)
+}
+
+func (ps *ProjectService) Update(project models.Project) error {
+	ps.serviceLoger.Info("Deleting project")
+	return ps.projectRespository.Update(project)
+}

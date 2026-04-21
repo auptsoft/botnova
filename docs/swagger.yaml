@@ -1,13 +1,74 @@
+definitions:
+  dtos.ProjectDto:
+    properties:
+      Description:
+        type: string
+      Name:
+        type: string
+      Options:
+        description: Extra details
+        type: string
+      UserId:
+        type: integer
+    required:
+    - Name
+    - UserId
+    type: object
 info:
   contact: {}
 paths:
   /api/project:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all projects
+      produces:
+      - application/json
+      responses: {}
+      summary: List All Projects
+      tags:
+      - project
     post:
       consumes:
       - application/json
       description: Create a new project
       parameters:
-      - description: User ID
+      - description: Project Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ProjectDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create Project
+      tags:
+      - project
+    put:
+      consumes:
+      - application/json
+      description: Update existing project
+      parameters:
+      - description: Project Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ProjectDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update Project
+      tags:
+      - project
+  /api/project/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a project by its ID
+      parameters:
+      - description: Project ID
         in: path
         name: id
         required: true
@@ -15,7 +76,23 @@ paths:
       produces:
       - application/json
       responses: {}
-      summary: Create Project
+      summary: Delete Project
+      tags:
+      - project
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a project by its ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Project by ID
       tags:
       - project
 swagger: "2.0"

@@ -16,6 +16,45 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/project": {
+            "get": {
+                "description": "Retrieve all projects",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "summary": "List All Projects",
+                "responses": {}
+            },
+            "put": {
+                "description": "Update existing project",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "summary": "Update Project",
+                "parameters": [
+                    {
+                        "description": "Project Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProjectDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
             "post": {
                 "description": "Create a new project",
                 "consumes": [
@@ -30,14 +69,88 @@ const docTemplate = `{
                 "summary": "Create Project",
                 "parameters": [
                     {
+                        "description": "Project Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProjectDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/project/{id}": {
+            "get": {
+                "description": "Retrieve a project by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "summary": "Get Project by ID",
+                "parameters": [
+                    {
                         "type": "integer",
-                        "description": "User ID",
+                        "description": "Project ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {}
+            },
+            "delete": {
+                "description": "Delete a project by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "project"
+                ],
+                "summary": "Delete Project",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "dtos.ProjectDto": {
+            "type": "object",
+            "required": [
+                "Name",
+                "UserId"
+            ],
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Options": {
+                    "description": "Extra details",
+                    "type": "string"
+                },
+                "UserId": {
+                    "type": "integer"
+                }
             }
         }
     }

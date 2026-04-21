@@ -12,7 +12,7 @@ func Migrate(db *gorm.DB) {
 
 	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
 		{
-			ID: "001_create_models",
+			ID: "002_create_models",
 			Migrate: func(tx *gorm.DB) error {
 				return tx.AutoMigrate(&entities.Project{})
 			},

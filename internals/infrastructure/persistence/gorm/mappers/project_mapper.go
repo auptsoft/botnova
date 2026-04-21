@@ -8,19 +8,23 @@ import (
 func ToDomain(e gormentities.Project) models.Project {
 	return models.Project{
 		Id:          e.Id,
-		UserID:      e.UserID,
+		UserId:      e.UserID,
 		Name:        e.Name,
 		Description: e.Description,
 		Options:     e.Options,
+		CreatedAt:   e.CreatedAt,
+		UpdatedAt:   e.UpdatedAt,
 	}
 }
 
 func ToEntity(m models.Project) gormentities.Project {
 	return gormentities.Project{
 		Id:          m.Id,
-		UserID:      m.UserID,
+		UserID:      m.UserId,
 		Name:        m.Name,
 		Description: m.Description,
 		Options:     m.Options,
+		CreatedAt:   m.CreatedAt,
+		UpdatedAt:   m.UpdatedAt,
 	}
 }

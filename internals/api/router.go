@@ -44,6 +44,9 @@ func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *g
 
 			projectRoutes.GET("/", projectHandler.ListProjects)
 			projectRoutes.POST("/", projectHandler.CreateProject)
+			projectRoutes.GET("/:id", projectHandler.GetByID)
+			projectRoutes.PUT("/", projectHandler.UpdateProject)
+			projectRoutes.DELETE("/:id", projectHandler.Delete)
 		}
 
 		transportRoutes := apiRoutes.Group("/transport")
