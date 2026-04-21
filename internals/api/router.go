@@ -1,0 +1,58 @@
+package api
+
+import (
+	"time"
+
+	"auptex.com/botnova/internals/api/handlers"
+	"auptex.com/botnova/internals/api/middlewares"
+	"auptex.com/botnova/internals/application/ports/dependencies"
+	"auptex.com/botnova/internals/infrastructure/transport/websocket"
+	ginzap "github.com/gin-contrib/zap"
+	"github.com/gin-gonic/gin"
+
+	_ "auptex.com/botnova/docs"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *gin.Engine {
+	router := gin.Default()
+
+	//Configure logger
+	router.Use(ginzap.Ginzap(deps.ServiceLogger.GetZapLogger(), time.RFC3339, true))
+	router.Use(ginzap.RecoveryWithZap(deps.ServiceLogger.GetZapLogger(), true))
+
+	//Add swagger docs endpoint
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//Add scalar docs endpoint
+	router.GET("/docs", handlers.ScalarDocsHandler)
+
+	// Apply middleware
+	router.Use(middlewares.AuthMiddleware())
+	// Health check endpoint
+	router.GET("/health", handlers.HealthHandler)
+
+	//Api Routes
+	apiRoutes := router.Group("/api")
+	// websocket endpoint
+	{
+		apiRoutes.GET("/ws", wsServer.HandleWebSocket)
+
+		projectRoutes := apiRoutes.Group("/project")
+		{
+			projectHandler := handlers.NewProjectHandler(deps.ProjectService)
+
+			projectRoutes.GET("/", projectHandler.ListProjects)
+			projectRoutes.POST("/", projectHandler.CreateProject)
+		}
+
+		transportRoutes := apiRoutes.Group("/transport")
+		{
+			transportHandler := handlers.NewTransportHandler(deps.TransportService)
+
+			transportRoutes.POST("/websocket", transportHandler.SendToWebsocket)
+		}
+	}
+
+	return router
+}
