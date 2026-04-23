@@ -13,8 +13,10 @@ type Dependencies struct {
 
 	//Repositories
 	ProjectRepository repositorydefinitions.ProjectRepository
+	UserRepository    repositorydefinitions.UserRepository
 
 	//Services
 	ProjectService   *services.ProjectService
+	UserService      *services.UserService
 	TransportService *services.TransportService
 }
