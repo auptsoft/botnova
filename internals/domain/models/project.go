@@ -3,8 +3,8 @@ package models
 import "time"
 
 type Project struct {
-	Id          int
-	UserId      int
+	Id          string
+	UserId      string
 	Name        string
 	Description string
 	Options     string //Extra details

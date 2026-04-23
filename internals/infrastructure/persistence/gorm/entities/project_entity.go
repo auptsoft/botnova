@@ -1,13 +1,18 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Project struct {
-	Id          int `gorm:"primaryKey"`
-	UserID      int
+	Id          string `gorm:"type:text;primaryKey"`
+	UserID      string
 	Name        string
 	Description string
 	Options     string //Extra details
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt
 }
