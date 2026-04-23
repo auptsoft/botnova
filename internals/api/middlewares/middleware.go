@@ -11,7 +11,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			userID = "dev-user"
 		}
 
-		c.Set("user_id", userID)
+		c.Set("user_id", "01952865-c71c-7708-8e6c-7e6d0800c149")
 		c.Next()
 	}
 }

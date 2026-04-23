@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"strconv"
-
 	"auptex.com/botnova/internals/api/dtos"
 	"auptex.com/botnova/internals/application/services"
 	"auptex.com/botnova/internals/domain/models"
@@ -93,14 +91,7 @@ func (ph *ProjectHandler) GetByID(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(idStr)
-
-	if err != nil {
-		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request id"})
-		return
-	}
-
-	data, err := ph.projectService.GetById(id)
+	data, err := ph.projectService.GetById(idStr)
 	if err != nil {
 		c.JSON(400, gin.H{"isSuccessful": false, "message": "An error occurred while deleting"})
 		return
@@ -116,8 +107,9 @@ func (ph *ProjectHandler) GetByID(c *gin.Context) {
 // @Produce      json
 // @Router       /api/project [get]
 func (ph *ProjectHandler) ListProjects(c *gin.Context) {
-	userId := 1 //TODO: Get userId from context
+	userId := c.GetString("user_id")
 	result, error := ph.projectService.ListProjects(userId)
+
 	if error != nil {
 		c.JSON(500, gin.H{"isSuccessful": false, "message": "Failed to list projects"})
 		return
@@ -141,14 +133,7 @@ func (ph *ProjectHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(idStr)
-
-	if err != nil {
-		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request id"})
-		return
-	}
-
-	err = ph.projectService.Delete(id)
+	err := ph.projectService.Delete(idStr)
 	if err != nil {
 		c.JSON(400, gin.H{"isSuccessful": false, "message": "An error occurred while deleting"})
 		return
