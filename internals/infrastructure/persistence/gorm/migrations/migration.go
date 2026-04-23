@@ -20,6 +20,15 @@ func Migrate(db *gorm.DB) {
 				return tx.Migrator().DropTable("model_entities")
 			},
 		},
+		{
+			ID: "003_create_users",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&entities.User{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable(&entities.User{})
+			},
+		},
 	})
 
 	if err := m.Migrate(); err != nil {

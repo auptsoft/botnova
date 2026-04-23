@@ -49,6 +49,16 @@ func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *g
 			projectRoutes.DELETE("/:id", projectHandler.Delete)
 		}
 
+		userRoutes := apiRoutes.Group("/user")
+		{
+			userHandler := handlers.NewUserHandler(deps.UserService)
+
+			userRoutes.POST("/", userHandler.CreateUser)
+			userRoutes.GET("/:id", userHandler.GetByID)
+			userRoutes.PUT("/", userHandler.UpdateUser)
+			userRoutes.DELETE("/:id", userHandler.Delete)
+		}
+
 		transportRoutes := apiRoutes.Group("/transport")
 		{
 			transportHandler := handlers.NewTransportHandler(deps.TransportService)

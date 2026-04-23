@@ -14,6 +14,18 @@ definitions:
     - Name
     - UserId
     type: object
+  dtos.UserDto:
+    properties:
+      Email:
+        type: string
+      Id:
+        type: integer
+      Name:
+        type: string
+    required:
+    - Email
+    - Name
+    type: object
 info:
   contact: {}
 paths:
@@ -95,4 +107,72 @@ paths:
       summary: Get Project by ID
       tags:
       - project
+  /api/user:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create User
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update existing user
+      parameters:
+      - description: User Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update User
+      tags:
+      - user
+  /api/user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete User
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get User by ID
+      tags:
+      - user
 swagger: "2.0"
