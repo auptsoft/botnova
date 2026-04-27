@@ -3,7 +3,7 @@ package entities
 import "time"
 
 type User struct {
-	Id        int `gorm:"primaryKey"`
+	Id        string `gorm:"primaryKey"`
 	Name      string
 	Email     string `gorm:"uniqueIndex"`
 	CreatedAt time.Time

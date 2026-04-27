@@ -4,6 +4,7 @@ import (
 	"auptex.com/botnova/internals/domain/models"
 	"auptex.com/botnova/internals/infrastructure/persistence/gorm/entities"
 	entity_mappers "auptex.com/botnova/internals/infrastructure/persistence/gorm/mappers"
+	"github.com/gofrs/uuid/v5"
 	"gorm.io/gorm"
 )
 
@@ -16,6 +17,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (r *UserRepository) Create(user models.User) error {
+	user.Id = uuid.Must(uuid.NewV7()).String()
 	entity := entity_mappers.ToUserEntity(user)
 	return r.db.Create(&entity).Error
 }
