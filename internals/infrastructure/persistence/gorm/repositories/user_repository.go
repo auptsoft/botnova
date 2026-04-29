@@ -19,8 +19,8 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 
 func (r *UserRepository) Create(user models.User) error {
 	user.Id = uuid.Must(uuid.NewV7()).String()
-	bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
+	bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,6 @@ func (r *UserRepository) Create(user models.User) error {
 
 	entity := entity_mappers.ToUserEntity(user)
 	return r.db.Create(&entity).Error
-
 }
 
 func (r *UserRepository) GetById(id string) (*models.User, error) {
@@ -42,9 +41,31 @@ func (r *UserRepository) GetById(id string) (*models.User, error) {
 	return &data, nil
 }
 
+func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
+	var entity entities.User
+	if err := r.db.First(&entity, "email = ?", email).Error; err != nil {
+		return nil, err
+	}
+
+	data := entity_mappers.ToUserDomain(entity)
+	return &data, nil
+}
+
 func (r *UserRepository) Update(user models.User) error {
-	entity := entity_mappers.ToUserEntity(user)
-	return r.db.Save(&entity).Error
+	updates := map[string]any{
+		"name":  user.Name,
+		"email": user.Email,
+	}
+
+	if user.Password != "" {
+		bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		updates["password"] = string(bytes)
+	}
+
+	return r.db.Model(&entities.User{}).Where("id = ?", user.Id).Updates(updates).Error
 }
 
 func (r *UserRepository) Delete(id string) error {
