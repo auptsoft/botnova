@@ -64,9 +64,7 @@ func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *g
 			userProtectedRoutes.GET("/me", userHandler.GetCurrentUser)
 			userProtectedRoutes.PUT("/me", userHandler.UpdateCurrentUser)
 			userProtectedRoutes.DELETE("/me", userHandler.DeleteCurrentUser)
-
 			userProtectedRoutes.GET("/:id", userHandler.GetByID)
-			userProtectedRoutes.DELETE("/:id", userHandler.Delete)
 		}
 
 		transportRoutes := protectedRoutes.Group("/transport")

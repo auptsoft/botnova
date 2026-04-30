@@ -186,38 +186,6 @@ func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": ToUserDto(*updatedUser)})
 }
 
-// @Summary      Delete User
-// @Description  Delete a user by its ID
-// @Tags         user
-// @Accept       json
-// @Produce      json
-// @Param        id path string true "User ID"
-// @Router       /api/user/{id} [delete]
-func (uh *UserHandler) Delete(c *gin.Context) {
-	id, ok := c.Params.Get("id")
-	if !ok {
-		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request."})
-		return
-	}
-	authUserID := c.GetString("user_id")
-	if authUserID == "" {
-		c.JSON(401, gin.H{"isSuccessful": false, "message": "Unauthorized"})
-		return
-	}
-	if id != authUserID {
-		c.JSON(403, gin.H{"isSuccessful": false, "message": "Forbidden"})
-		return
-	}
-
-	err := uh.userService.Delete(id)
-	if err != nil {
-		handleUserServiceError(c, err, "An error occurred while deleting")
-		return
-	}
-
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "Deleted successfully"})
-}
-
 // @Summary      Delete Current User
 // @Description  Delete the authenticated user's account
 // @Tags         user

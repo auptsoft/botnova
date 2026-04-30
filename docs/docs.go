@@ -261,29 +261,6 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {}
-            },
-            "delete": {
-                "description": "Delete a user by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Delete User",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {}
             }
         }
     },
