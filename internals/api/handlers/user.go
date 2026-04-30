@@ -147,6 +147,7 @@ func (uh *UserHandler) GetByID(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
+// @Param        Authorization header string true "Bearer <token>"
 // @Router       /api/user/me [get]
 func (uh *UserHandler) GetCurrentUser(c *gin.Context) {
 	userID := c.GetString("user_id")
@@ -169,6 +170,7 @@ func (uh *UserHandler) GetCurrentUser(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
+// @Param        Authorization header string true "Bearer <token>"
 // @Param 		 request body dtos.UserUpdateDto true "User Data"
 // @Router       /api/user/me [put]
 func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
@@ -211,6 +213,7 @@ func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
+// @Param        Authorization header string true "Bearer <token>"
 // @Param 		 request body dtos.UserChangePasswordDto true "Password Change Data"
 // @Router       /api/user/me/change-password [put]
 func (uh *UserHandler) ChangePassword(c *gin.Context) {
@@ -240,6 +243,7 @@ func (uh *UserHandler) ChangePassword(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
+// @Param        Authorization header string true "Bearer <token>"
 // @Router       /api/user/me [delete]
 func (uh *UserHandler) DeleteCurrentUser(c *gin.Context) {
 	userID := c.GetString("user_id")

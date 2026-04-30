@@ -169,6 +169,15 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Get Current User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             },
             "put": {
@@ -184,6 +193,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update Current User",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "User Data",
                         "name": "request",
@@ -208,6 +224,15 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Delete Current User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -225,6 +250,13 @@ const docTemplate = `{
                 ],
                 "summary": "Change Current User Password",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Password Change Data",
                         "name": "request",
