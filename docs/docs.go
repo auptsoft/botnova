@@ -149,14 +149,14 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.UserDto"
+                            "$ref": "#/definitions/dtos.UserUpdateDto"
                         }
                     }
                 ],
                 "responses": {}
             },
             "post": {
-                "description": "Create a new user",
+                "description": "Register a new user account",
                 "consumes": [
                     "application/json"
                 ],
@@ -166,7 +166,75 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Create User",
+                "summary": "Sign Up User",
+                "parameters": [
+                    {
+                        "description": "Signup Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserSignupDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "description": "Authenticate a user and return a JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Login User",
+                "parameters": [
+                    {
+                        "description": "Login Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserLoginDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/user/me": {
+            "get": {
+                "description": "Retrieve the authenticated user's profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get Current User",
+                "responses": {}
+            },
+            "put": {
+                "description": "Update the authenticated user's profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update Current User",
                 "parameters": [
                     {
                         "description": "User Data",
@@ -174,7 +242,48 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.UserDto"
+                            "$ref": "#/definitions/dtos.UserUpdateDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Delete the authenticated user's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete Current User",
+                "responses": {}
+            }
+        },
+        "/api/user/signup": {
+            "post": {
+                "description": "Register a new user account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Sign Up User",
+                "parameters": [
+                    {
+                        "description": "Signup Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserSignupDto"
                         }
                     }
                 ],
@@ -196,7 +305,7 @@ const docTemplate = `{
                 "summary": "Get User by ID",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
@@ -219,7 +328,7 @@ const docTemplate = `{
                 "summary": "Delete User",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
@@ -249,25 +358,57 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "UserId": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
-        "dtos.UserDto": {
+        "dtos.UserLoginDto": {
             "type": "object",
             "required": [
                 "Email",
-                "Name"
+                "Password"
             ],
             "properties": {
                 "Email": {
                     "type": "string"
                 },
-                "Id": {
-                    "type": "integer"
+                "Password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UserSignupDto": {
+            "type": "object",
+            "required": [
+                "Email",
+                "Name",
+                "Password"
+            ],
+            "properties": {
+                "Email": {
+                    "type": "string"
                 },
                 "Name": {
                     "type": "string"
+                },
+                "Password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "dtos.UserUpdateDto": {
+            "type": "object",
+            "properties": {
+                "Email": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Password": {
+                    "type": "string",
+                    "minLength": 8
                 }
             }
         }

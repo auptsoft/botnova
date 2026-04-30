@@ -9,22 +9,44 @@ definitions:
         description: Extra details
         type: string
       UserId:
-        type: integer
+        type: string
     required:
     - Name
     - UserId
     type: object
-  dtos.UserDto:
+  dtos.UserLoginDto:
     properties:
       Email:
         type: string
-      Id:
-        type: integer
+      Password:
+        type: string
+    required:
+    - Email
+    - Password
+    type: object
+  dtos.UserSignupDto:
+    properties:
+      Email:
+        type: string
       Name:
+        type: string
+      Password:
+        minLength: 8
         type: string
     required:
     - Email
     - Name
+    - Password
+    type: object
+  dtos.UserUpdateDto:
+    properties:
+      Email:
+        type: string
+      Name:
+        type: string
+      Password:
+        minLength: 8
+        type: string
     type: object
 info:
   contact: {}
@@ -111,18 +133,18 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new user
+      description: Register a new user account
       parameters:
-      - description: User Data
+      - description: Signup Data
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dtos.UserDto'
+          $ref: '#/definitions/dtos.UserSignupDto'
       produces:
       - application/json
       responses: {}
-      summary: Create User
+      summary: Sign Up User
       tags:
       - user
     put:
@@ -135,7 +157,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dtos.UserDto'
+          $ref: '#/definitions/dtos.UserUpdateDto'
       produces:
       - application/json
       responses: {}
@@ -152,7 +174,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses: {}
@@ -168,11 +190,85 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses: {}
       summary: Get User by ID
+      tags:
+      - user
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT
+      parameters:
+      - description: Login Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserLoginDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Login User
+      tags:
+      - user
+  /api/user/me:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the authenticated user's account
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete Current User
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the authenticated user's profile
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Current User
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update the authenticated user's profile
+      parameters:
+      - description: User Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserUpdateDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update Current User
+      tags:
+      - user
+  /api/user/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account
+      parameters:
+      - description: Signup Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserSignupDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Sign Up User
       tags:
       - user
 swagger: "2.0"
