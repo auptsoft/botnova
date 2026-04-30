@@ -19,7 +19,7 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 	}
 }
 
-func toUserDto(user models.User) dtos.UserDto {
+func ToUserDto(user models.User) dtos.UserDto {
 	return dtos.UserDto{
 		Id:    user.Id,
 		Name:  user.Name,
@@ -70,7 +70,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		"message":      "Signup successful",
 		"data": gin.H{
 			"token": result.Token,
-			"user":  toUserDto(result.User),
+			"user":  ToUserDto(result.User),
 		},
 	})
 }
@@ -100,7 +100,7 @@ func (uh *UserHandler) Login(c *gin.Context) {
 		"message":      "Login successful",
 		"data": gin.H{
 			"token": result.Token,
-			"user":  toUserDto(result.User),
+			"user":  ToUserDto(result.User),
 		},
 	})
 }
@@ -131,7 +131,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": toUserDto(*updatedUser)})
+	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": ToUserDto(*updatedUser)})
 }
 
 // @Summary      Get User by ID
@@ -154,7 +154,7 @@ func (uh *UserHandler) GetByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "Success", "data": toUserDto(*data)})
+	c.JSON(200, gin.H{"isSuccessful": true, "message": "Success", "data": ToUserDto(*data)})
 }
 
 // @Summary      Get Current User
@@ -176,7 +176,7 @@ func (uh *UserHandler) GetCurrentUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "Success", "data": toUserDto(*data)})
+	c.JSON(200, gin.H{"isSuccessful": true, "message": "Success", "data": ToUserDto(*data)})
 }
 
 // @Summary      Update Current User
@@ -205,7 +205,7 @@ func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": toUserDto(*updatedUser)})
+	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": ToUserDto(*updatedUser)})
 }
 
 // @Summary      Delete User
