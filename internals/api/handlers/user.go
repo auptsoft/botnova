@@ -47,7 +47,6 @@ func handleUserServiceError(c *gin.Context, err error, fallbackMessage string) {
 // @Produce      json
 // @Param 		 request body dtos.UserSignupDto true "Signup Data"
 // @Router       /api/user/signup [post]
-// @Router       /api/user [post]
 func (uh *UserHandler) SignUp(c *gin.Context) {
 	var req dtos.UserSignupDto
 	if err := c.ShouldBindJSON(&req); err != nil {

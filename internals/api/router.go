@@ -38,7 +38,6 @@ func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *g
 	// Public user auth routes
 	userPublicRoutes := apiRoutes.Group("/user")
 	{
-		userPublicRoutes.POST("/", userHandler.SignUp)
 		userPublicRoutes.POST("/signup", userHandler.SignUp)
 		userPublicRoutes.POST("/login", userHandler.Login)
 	}
