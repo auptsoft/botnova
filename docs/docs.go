@@ -211,7 +211,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/user/me/password": {
+        "/api/user/me/change-password": {
             "put": {
                 "description": "Change the authenticated user's password",
                 "consumes": [

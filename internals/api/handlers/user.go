@@ -186,7 +186,7 @@ func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 	for key := range raw {
 		normalizedKey := strings.ToLower(strings.TrimSpace(key))
 		if normalizedKey == "password" || normalizedKey == "currentpassword" || normalizedKey == "newpassword" {
-			c.JSON(400, gin.H{"isSuccessful": false, "message": "Use /api/user/me/password to change password"})
+			c.JSON(400, gin.H{"isSuccessful": false, "message": "Use /api/user/me/change-password to change password"})
 			return
 		}
 	}
@@ -212,7 +212,7 @@ func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param 		 request body dtos.UserChangePasswordDto true "Password Change Data"
-// @Router       /api/user/me/password [put]
+// @Router       /api/user/me/change-password [put]
 func (uh *UserHandler) ChangePassword(c *gin.Context) {
 	var req dtos.UserChangePasswordDto
 	if err := c.ShouldBindJSON(&req); err != nil {
