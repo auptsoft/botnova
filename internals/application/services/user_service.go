@@ -2,11 +2,8 @@ package services
 
 import (
 	"errors"
-	"os"
-	"strconv"
 	"strings"
 	"time"
-
 	"auptex.com/botnova/internals/application/ports"
 	repositorydefinitions "auptex.com/botnova/internals/application/ports/repository_definitions"
 	"auptex.com/botnova/internals/domain/models"
@@ -27,32 +24,22 @@ type AuthResult struct {
 	User  models.User
 }
 
+type AuthConfig struct {
+	JwtSecret      []byte
+	JwtTTL         time.Duration
+}
+
 type UserService struct {
 	userRepository repositorydefinitions.UserRepository
 	serviceLogger  ports.Logger
-	jwtSecret      []byte
-	jwtTTL         time.Duration
+	authConfig AuthConfig
 }
 
-func NewUserService(userRepository repositorydefinitions.UserRepository, serviceLogger ports.Logger) *UserService {
-	jwtTTLHours := 24 * 7
-	if ttlFromEnv := os.Getenv("JWT_TTL_HOURS"); ttlFromEnv != "" {
-		parsedTTL, err := strconv.Atoi(ttlFromEnv)
-		if err == nil && parsedTTL > 0 {
-			jwtTTLHours = parsedTTL
-		}
-	}
-
-	jwtSecret := os.Getenv("JWT_SECRET")
-	if jwtSecret == "" {
-		jwtSecret = "dev-secret-change-me"
-	}
-
+func NewUserService(userRepository repositorydefinitions.UserRepository, serviceLogger ports.Logger, authConfig AuthConfig) *UserService {
 	return &UserService{
 		userRepository: userRepository,
 		serviceLogger:  serviceLogger,
-		jwtSecret:      []byte(jwtSecret),
-		jwtTTL:         time.Duration(jwtTTLHours) * time.Hour,
+		authConfig: authConfig,
 	}
 }
 
@@ -194,18 +181,18 @@ func (us *UserService) UpdateUser(userID string, name string, email string, pass
 }
 
 func (us *UserService) generateToken(userID string) (string, error) {
-	if len(us.jwtSecret) == 0 {
+	if len(us.authConfig.JwtSecret) == 0 {
 		return "", ErrInvalidTokenConfig
 	}
 
 	claims := jwt.RegisteredClaims{
 		Subject:   userID,
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(us.jwtTTL)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(us.authConfig.JwtTTL)),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(us.jwtSecret)
+	return token.SignedString(us.authConfig.JwtSecret)
 }
 
 func hashPassword(password string) (string, error) {
