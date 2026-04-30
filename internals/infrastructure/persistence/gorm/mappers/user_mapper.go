@@ -10,18 +10,25 @@ func ToUserDomain(e gormentities.User) models.User {
 		Id:        e.Id,
 		Name:      e.Name,
 		Email:     e.Email,
-		Password:  e.Password,
 		CreatedAt: e.CreatedAt,
 		UpdatedAt: e.UpdatedAt,
 	}
 }
 
-func ToUserEntity(m models.User) gormentities.User {
+func ToUserAuthDomain(e gormentities.User) models.UserAuth {
+	return models.UserAuth{
+		UserID:       e.Id,
+		Email:        e.Email,
+		PasswordHash: e.Password,
+	}
+}
+
+func ToUserEntity(m models.User, passwordHash string) gormentities.User {
 	return gormentities.User{
 		Id:        m.Id,
 		Name:      m.Name,
 		Email:     m.Email,
-		Password:  m.Password,
+		Password:  passwordHash,
 		CreatedAt: m.CreatedAt,
 		UpdatedAt: m.UpdatedAt,
 	}

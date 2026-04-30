@@ -56,11 +56,11 @@ func NewUserService(userRepository repositorydefinitions.UserRepository, service
 	}
 }
 
-func (us *UserService) SignUp(user models.User) (*AuthResult, error) {
-	user.Name = strings.TrimSpace(user.Name)
-	user.Email = normalizeEmail(user.Email)
+func (us *UserService) SignUp(user models.User, password string) (*AuthResult, error) {
+	normalizedName := strings.TrimSpace(user.Name)
+	normalizedEmail := normalizeEmail(user.Email)
 
-	existingUser, err := us.userRepository.GetByEmail(user.Email)
+	existingUser, err := us.userRepository.GetByEmail(normalizedEmail)
 	if err == nil && existingUser != nil {
 		return nil, ErrEmailAlreadyExists
 	}
@@ -68,11 +68,15 @@ func (us *UserService) SignUp(user models.User) (*AuthResult, error) {
 		return nil, err
 	}
 
-	if err := us.userRepository.Create(user); err != nil {
+	passwordHash, err := hashPassword(password)
+	if err != nil {
 		return nil, err
 	}
 
-	createdUser, err := us.userRepository.GetByEmail(user.Email)
+	createdUser, err := us.userRepository.Create(models.User{
+		Name:  normalizedName,
+		Email: normalizedEmail,
+	}, passwordHash)
 	if err != nil {
 		return nil, err
 	}
@@ -82,13 +86,12 @@ func (us *UserService) SignUp(user models.User) (*AuthResult, error) {
 		return nil, err
 	}
 
-	createdUser.Password = ""
 	return &AuthResult{Token: token, User: *createdUser}, nil
 }
 
 func (us *UserService) Login(email string, password string) (*AuthResult, error) {
 	normalizedEmail := normalizeEmail(email)
-	user, err := us.userRepository.GetByEmail(normalizedEmail)
+	authUser, err := us.userRepository.GetAuthByEmail(normalizedEmail)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrInvalidCredentials
@@ -96,8 +99,16 @@ func (us *UserService) Login(email string, password string) (*AuthResult, error)
 		return nil, err
 	}
 
-	if compareErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); compareErr != nil {
+	if compareErr := bcrypt.CompareHashAndPassword([]byte(authUser.PasswordHash), []byte(password)); compareErr != nil {
 		return nil, ErrInvalidCredentials
+	}
+
+	user, err := us.userRepository.GetById(authUser.UserID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
 	}
 
 	token, err := us.generateToken(user.Id)
@@ -105,14 +116,7 @@ func (us *UserService) Login(email string, password string) (*AuthResult, error)
 		return nil, err
 	}
 
-	user.Password = ""
 	return &AuthResult{Token: token, User: *user}, nil
-}
-
-func (us *UserService) CreateUser(user models.User) error {
-	us.serviceLogger.Info("Creating user...")
-	_, err := us.SignUp(user)
-	return err
 }
 
 func (us *UserService) Delete(userId string) error {
@@ -137,14 +141,7 @@ func (us *UserService) GetById(userId string) (*models.User, error) {
 		return nil, err
 	}
 
-	user.Password = ""
 	return user, nil
-}
-
-func (us *UserService) Update(user models.User) error {
-	us.serviceLogger.Info("Updating user")
-	_, err := us.UpdateUser(user.Id, user.Name, user.Email, user.Password)
-	return err
 }
 
 func (us *UserService) UpdateUser(userID string, name string, email string, password string) (*models.User, error) {
@@ -174,12 +171,18 @@ func (us *UserService) UpdateUser(userID string, name string, email string, pass
 		existingUser.Email = normalizedEmail
 	}
 
-	if strings.TrimSpace(password) != "" {
-		existingUser.Password = password
-	}
-
 	if err := us.userRepository.Update(*existingUser); err != nil {
 		return nil, err
+	}
+
+	if strings.TrimSpace(password) != "" {
+		passwordHash, hashErr := hashPassword(password)
+		if hashErr != nil {
+			return nil, hashErr
+		}
+		if err := us.userRepository.UpdatePassword(userID, passwordHash); err != nil {
+			return nil, err
+		}
 	}
 
 	updatedUser, err := us.userRepository.GetById(userID)
@@ -187,7 +190,6 @@ func (us *UserService) UpdateUser(userID string, name string, email string, pass
 		return nil, err
 	}
 
-	updatedUser.Password = ""
 	return updatedUser, nil
 }
 
@@ -204,6 +206,14 @@ func (us *UserService) generateToken(userID string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(us.jwtSecret)
+}
+
+func hashPassword(password string) (string, error) {
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedBytes), nil
 }
 
 func normalizeEmail(email string) string {
