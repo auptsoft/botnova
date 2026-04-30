@@ -129,58 +129,6 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/user": {
-            "put": {
-                "description": "Update existing user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Update User",
-                "parameters": [
-                    {
-                        "description": "User Data",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.UserUpdateDto"
-                        }
-                    }
-                ],
-                "responses": {}
-            },
-            "post": {
-                "description": "Register a new user account",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Sign Up User",
-                "parameters": [
-                    {
-                        "description": "Signup Data",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.UserSignupDto"
-                        }
-                    }
-                ],
-                "responses": {}
-            }
-        },
         "/api/user/login": {
             "post": {
                 "description": "Authenticate a user and return a JWT",

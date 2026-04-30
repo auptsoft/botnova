@@ -129,41 +129,6 @@ paths:
       summary: Get Project by ID
       tags:
       - project
-  /api/user:
-    post:
-      consumes:
-      - application/json
-      description: Register a new user account
-      parameters:
-      - description: Signup Data
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.UserSignupDto'
-      produces:
-      - application/json
-      responses: {}
-      summary: Sign Up User
-      tags:
-      - user
-    put:
-      consumes:
-      - application/json
-      description: Update existing user
-      parameters:
-      - description: User Data
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.UserUpdateDto'
-      produces:
-      - application/json
-      responses: {}
-      summary: Update User
-      tags:
-      - user
   /api/user/{id}:
     delete:
       consumes:

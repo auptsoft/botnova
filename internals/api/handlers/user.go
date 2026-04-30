@@ -47,7 +47,6 @@ func handleUserServiceError(c *gin.Context, err error, fallbackMessage string) {
 // @Produce      json
 // @Param 		 request body dtos.UserSignupDto true "Signup Data"
 // @Router       /api/user/signup [post]
-// @Router       /api/user [post]
 func (uh *UserHandler) SignUp(c *gin.Context) {
 	var req dtos.UserSignupDto
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -105,35 +104,6 @@ func (uh *UserHandler) Login(c *gin.Context) {
 	})
 }
 
-// @Summary      Update User
-// @Description  Update existing user
-// @Tags         user
-// @Accept       json
-// @Produce      json
-// @Param 		 request body dtos.UserUpdateDto true "User Data"
-// @Router       /api/user [put]
-func (uh *UserHandler) UpdateUser(c *gin.Context) {
-	var req dtos.UserUpdateDto
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request"})
-		return
-	}
-
-	userID := c.GetString("user_id")
-	if userID == "" {
-		c.JSON(401, gin.H{"isSuccessful": false, "message": "Unauthorized"})
-		return
-	}
-
-	updatedUser, err := uh.userService.UpdateUser(userID, req.Name, req.Email, req.Password)
-	if err != nil {
-		handleUserServiceError(c, err, "Failed to update user")
-		return
-	}
-
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": ToUserDto(*updatedUser)})
-}
-
 // @Summary      Get User by ID
 // @Description  Retrieve a user by its ID
 // @Tags         user
@@ -145,6 +115,15 @@ func (uh *UserHandler) GetByID(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
 		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request."})
+		return
+	}
+	authUserID := c.GetString("user_id")
+	if authUserID == "" {
+		c.JSON(401, gin.H{"isSuccessful": false, "message": "Unauthorized"})
+		return
+	}
+	if id != authUserID {
+		c.JSON(403, gin.H{"isSuccessful": false, "message": "Forbidden"})
 		return
 	}
 
@@ -219,6 +198,15 @@ func (uh *UserHandler) Delete(c *gin.Context) {
 	id, ok := c.Params.Get("id")
 	if !ok {
 		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request."})
+		return
+	}
+	authUserID := c.GetString("user_id")
+	if authUserID == "" {
+		c.JSON(401, gin.H{"isSuccessful": false, "message": "Unauthorized"})
+		return
+	}
+	if id != authUserID {
+		c.JSON(403, gin.H{"isSuccessful": false, "message": "Forbidden"})
 		return
 	}
 
