@@ -211,6 +211,33 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/api/user/me/password": {
+            "put": {
+                "description": "Change the authenticated user's password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Change Current User Password",
+                "parameters": [
+                    {
+                        "description": "Password Change Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserChangePasswordDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/user/signup": {
             "post": {
                 "description": "Register a new user account",
@@ -287,6 +314,22 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.UserChangePasswordDto": {
+            "type": "object",
+            "required": [
+                "CurrentPassword",
+                "NewPassword"
+            ],
+            "properties": {
+                "CurrentPassword": {
+                    "type": "string"
+                },
+                "NewPassword": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
         "dtos.UserLoginDto": {
             "type": "object",
             "required": [
@@ -330,10 +373,6 @@ const docTemplate = `{
                 },
                 "Name": {
                     "type": "string"
-                },
-                "Password": {
-                    "type": "string",
-                    "minLength": 8
                 }
             }
         }

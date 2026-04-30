@@ -1,22 +1,24 @@
 package services
 
 import (
-	"errors"
-	"strings"
-	"time"
 	"auptex.com/botnova/internals/application/ports"
 	repositorydefinitions "auptex.com/botnova/internals/application/ports/repository_definitions"
 	"auptex.com/botnova/internals/domain/models"
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"strings"
+	"time"
 )
 
 var (
-	ErrUserNotFound       = errors.New("user not found")
-	ErrEmailAlreadyExists = errors.New("email already exists")
-	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrInvalidTokenConfig = errors.New("invalid token configuration")
+	ErrUserNotFound           = errors.New("user not found")
+	ErrEmailAlreadyExists     = errors.New("email already exists")
+	ErrInvalidCredentials     = errors.New("invalid credentials")
+	ErrInvalidTokenConfig     = errors.New("invalid token configuration")
+	ErrCurrentPasswordInvalid = errors.New("current password is incorrect")
+	ErrPasswordUnchanged      = errors.New("new password must be different from current password")
 )
 
 type AuthResult struct {
@@ -25,21 +27,21 @@ type AuthResult struct {
 }
 
 type AuthConfig struct {
-	JwtSecret      []byte
-	JwtTTL         time.Duration
+	JwtSecret []byte
+	JwtTTL    time.Duration
 }
 
 type UserService struct {
 	userRepository repositorydefinitions.UserRepository
 	serviceLogger  ports.Logger
-	authConfig AuthConfig
+	authConfig     AuthConfig
 }
 
 func NewUserService(userRepository repositorydefinitions.UserRepository, serviceLogger ports.Logger, authConfig AuthConfig) *UserService {
 	return &UserService{
 		userRepository: userRepository,
 		serviceLogger:  serviceLogger,
-		authConfig: authConfig,
+		authConfig:     authConfig,
 	}
 }
 
@@ -131,7 +133,7 @@ func (us *UserService) GetById(userId string) (*models.User, error) {
 	return user, nil
 }
 
-func (us *UserService) UpdateUser(userID string, name string, email string, password string) (*models.User, error) {
+func (us *UserService) UpdateUser(userID string, name string, email string) (*models.User, error) {
 	existingUser, err := us.userRepository.GetById(userID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -162,22 +164,45 @@ func (us *UserService) UpdateUser(userID string, name string, email string, pass
 		return nil, err
 	}
 
-	if strings.TrimSpace(password) != "" {
-		passwordHash, hashErr := hashPassword(password)
-		if hashErr != nil {
-			return nil, hashErr
-		}
-		if err := us.userRepository.UpdatePassword(userID, passwordHash); err != nil {
-			return nil, err
-		}
-	}
-
 	updatedUser, err := us.userRepository.GetById(userID)
 	if err != nil {
 		return nil, err
 	}
 
 	return updatedUser, nil
+}
+
+func (us *UserService) ChangePassword(userID string, currentPassword string, newPassword string) error {
+	existingUser, err := us.userRepository.GetById(userID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrUserNotFound
+		}
+		return err
+	}
+
+	authUser, err := us.userRepository.GetAuthByEmail(existingUser.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrUserNotFound
+		}
+		return err
+	}
+
+	if compareErr := bcrypt.CompareHashAndPassword([]byte(authUser.PasswordHash), []byte(currentPassword)); compareErr != nil {
+		return ErrCurrentPasswordInvalid
+	}
+
+	if compareErr := bcrypt.CompareHashAndPassword([]byte(authUser.PasswordHash), []byte(newPassword)); compareErr == nil {
+		return ErrPasswordUnchanged
+	}
+
+	passwordHash, err := hashPassword(newPassword)
+	if err != nil {
+		return err
+	}
+
+	return us.userRepository.UpdatePassword(userID, passwordHash)
 }
 
 func (us *UserService) generateToken(userID string) (string, error) {

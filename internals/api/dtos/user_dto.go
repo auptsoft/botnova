@@ -18,7 +18,11 @@ type UserLoginDto struct {
 }
 
 type UserUpdateDto struct {
-	Name     string `json:"Name"`
-	Email    string `json:"Email" binding:"omitempty,email"`
-	Password string `json:"Password" binding:"omitempty,min=8"`
+	Name  string `json:"Name"`
+	Email string `json:"Email" binding:"omitempty,email"`
+}
+
+type UserChangePasswordDto struct {
+	CurrentPassword string `json:"CurrentPassword" binding:"required"`
+	NewPassword     string `json:"NewPassword" binding:"required,min=8"`
 }

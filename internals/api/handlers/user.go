@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
+	"strings"
 
 	"auptex.com/botnova/internals/api/dtos"
 	"auptex.com/botnova/internals/application/services"
 	"auptex.com/botnova/internals/domain/models"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type UserHandler struct {
@@ -33,6 +36,10 @@ func handleUserServiceError(c *gin.Context, err error, fallbackMessage string) {
 		c.JSON(409, gin.H{"isSuccessful": false, "message": "Email already exists"})
 	case errors.Is(err, services.ErrInvalidCredentials):
 		c.JSON(401, gin.H{"isSuccessful": false, "message": "Invalid email or password"})
+	case errors.Is(err, services.ErrCurrentPasswordInvalid):
+		c.JSON(401, gin.H{"isSuccessful": false, "message": "Current password is incorrect"})
+	case errors.Is(err, services.ErrPasswordUnchanged):
+		c.JSON(400, gin.H{"isSuccessful": false, "message": "New password must be different from current password"})
 	case errors.Is(err, services.ErrUserNotFound):
 		c.JSON(404, gin.H{"isSuccessful": false, "message": "User not found"})
 	default:
@@ -166,6 +173,48 @@ func (uh *UserHandler) GetCurrentUser(c *gin.Context) {
 // @Router       /api/user/me [put]
 func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 	var req dtos.UserUpdateDto
+	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request"})
+		return
+	}
+
+	var raw map[string]json.RawMessage
+	if err := c.ShouldBindBodyWith(&raw, binding.JSON); err != nil {
+		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request"})
+		return
+	}
+	for key := range raw {
+		normalizedKey := strings.ToLower(strings.TrimSpace(key))
+		if normalizedKey == "password" || normalizedKey == "currentpassword" || normalizedKey == "newpassword" {
+			c.JSON(400, gin.H{"isSuccessful": false, "message": "Use /api/user/me/password to change password"})
+			return
+		}
+	}
+
+	userID := c.GetString("user_id")
+	if userID == "" {
+		c.JSON(401, gin.H{"isSuccessful": false, "message": "Unauthorized"})
+		return
+	}
+
+	updatedUser, err := uh.userService.UpdateUser(userID, req.Name, req.Email)
+	if err != nil {
+		handleUserServiceError(c, err, "Failed to update user")
+		return
+	}
+
+	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": ToUserDto(*updatedUser)})
+}
+
+// @Summary      Change Current User Password
+// @Description  Change the authenticated user's password
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param 		 request body dtos.UserChangePasswordDto true "Password Change Data"
+// @Router       /api/user/me/password [put]
+func (uh *UserHandler) ChangePassword(c *gin.Context) {
+	var req dtos.UserChangePasswordDto
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"isSuccessful": false, "message": "Invalid request"})
 		return
@@ -177,13 +226,13 @@ func (uh *UserHandler) UpdateCurrentUser(c *gin.Context) {
 		return
 	}
 
-	updatedUser, err := uh.userService.UpdateUser(userID, req.Name, req.Email, req.Password)
+	err := uh.userService.ChangePassword(userID, req.CurrentPassword, req.NewPassword)
 	if err != nil {
-		handleUserServiceError(c, err, "Failed to update user")
+		handleUserServiceError(c, err, "Failed to change password")
 		return
 	}
 
-	c.JSON(200, gin.H{"isSuccessful": true, "message": "User updated successfully", "data": ToUserDto(*updatedUser)})
+	c.JSON(200, gin.H{"isSuccessful": true, "message": "Password changed successfully"})
 }
 
 // @Summary      Delete Current User

@@ -14,6 +14,17 @@ definitions:
     - Name
     - UserId
     type: object
+  dtos.UserChangePasswordDto:
+    properties:
+      CurrentPassword:
+        type: string
+      NewPassword:
+        minLength: 8
+        type: string
+    required:
+    - CurrentPassword
+    - NewPassword
+    type: object
   dtos.UserLoginDto:
     properties:
       Email:
@@ -43,9 +54,6 @@ definitions:
       Email:
         type: string
       Name:
-        type: string
-      Password:
-        minLength: 8
         type: string
     type: object
 info:
@@ -200,6 +208,24 @@ paths:
       - application/json
       responses: {}
       summary: Update Current User
+      tags:
+      - user
+  /api/user/me/password:
+    put:
+      consumes:
+      - application/json
+      description: Change the authenticated user's password
+      parameters:
+      - description: Password Change Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserChangePasswordDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Change Current User Password
       tags:
       - user
   /api/user/signup:
