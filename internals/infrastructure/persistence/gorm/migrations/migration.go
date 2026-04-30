@@ -12,21 +12,22 @@ func Migrate(db *gorm.DB) {
 
 	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{
 		{
-			ID: "006_create_models",
+			ID: "001_create_models",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.AutoMigrate(&entities.Project{})
+				return tx.AutoMigrate(
+					&entities.Project{},
+					&entities.User{},
+					&entities.Robot{},
+					&entities.RobotModel{},
+					&entities.Script{},
+					&entities.RobotEndpoint{},
+					&entities.RobotGroup{},
+					&entities.RobotGroupMember{},
+					&entities.CalibrationEntity{},
+				)
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().DropTable("model_entities")
-			},
-		},
-		{
-			ID: "003_create_users",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.AutoMigrate(&entities.User{})
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropTable(&entities.User{})
 			},
 		},
 	})

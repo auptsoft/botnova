@@ -3,9 +3,9 @@ package repositorydefinitions
 import "auptex.com/botnova/internals/domain/models"
 
 type RobotModelRepository interface {
-	Create(project models.RobotModel) error
+	Create(robotModel *models.RobotModel) error
 	GetById(id string) (*models.RobotModel, error)
-	Update(m models.RobotModel) error
+	Update(robotModel *models.RobotModel) error
 	Delete(id string) error
-	GetByUserId(id string) ([]models.RobotModel, error)
+	GetByUserId(userId string) ([]models.RobotModel, error)
 }

@@ -5,7 +5,7 @@ import (
 	gormentities "auptex.com/botnova/internals/infrastructure/persistence/gorm/entities"
 )
 
-func ToDomain(e gormentities.Project) models.Project {
+func ToProjectDomain(e gormentities.Project) models.Project {
 	return models.Project{
 		Id:          e.Id,
 		UserId:      e.UserID,
@@ -17,7 +17,7 @@ func ToDomain(e gormentities.Project) models.Project {
 	}
 }
 
-func ToEntity(m models.Project) gormentities.Project {
+func ToProjectEntity(m models.Project) gormentities.Project {
 	return gormentities.Project{
 		Id:          m.Id,
 		UserID:      m.UserId,

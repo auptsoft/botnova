@@ -9,7 +9,7 @@ import (
 
 type Script struct {
 	Id        string
-	ProjectID string
+	ProjectId string
 	Name      string
 	Type      models.ScriptType
 

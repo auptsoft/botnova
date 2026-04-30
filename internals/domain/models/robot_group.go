@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type GroupMode string
 
 const (
@@ -11,8 +13,8 @@ const (
 )
 
 type RobotGroup struct {
-	ID     string
-	UserID string
+	Id     string
+	UserId string
 
 	Name        string
 	Description string
@@ -21,16 +23,21 @@ type RobotGroup struct {
 	Mode GroupMode
 
 	// Optional: explicit ordering (useful for leader-follower)
-	PrimaryRobotID string
+	PrimaryRobotId string
 
 	// Optional metadata
-	Tags []string
+	Options   string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type RobotGroupMember struct {
-	GroupID string
-	RobotID string
+	Id      string
+	GroupId string
+	RobotId string
 
-	Role     string // "primary", "secondary", "observer"
-	Priority int
+	Role      string // "primary", "secondary", "observer"
+	Priority  int
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

@@ -12,8 +12,15 @@ type Dependencies struct {
 	WsTransport   ports.EventTransport
 
 	//Repositories
-	ProjectRepository repositorydefinitions.ProjectRepository
-	UserRepository    repositorydefinitions.UserRepository
+	ProjectRepository          repositorydefinitions.ProjectRepository
+	UserRepository             repositorydefinitions.UserRepository
+	RobotRepository            repositorydefinitions.RobotRepository
+	RobotModelRepository       repositorydefinitions.RobotModelRepository
+	ScriptRepository           repositorydefinitions.ScriptRepository
+	RobotEndpointRepository    repositorydefinitions.RobotEndpointRepository
+	RobotGroupRepository       repositorydefinitions.RobotGroupRepository
+	RobotGroupMemberRepository repositorydefinitions.RobotGroupMemberRepository
+	CalibrationRepository      repositorydefinitions.CalibrationRepository
 
 	//Services
 	ProjectService   *services.ProjectService

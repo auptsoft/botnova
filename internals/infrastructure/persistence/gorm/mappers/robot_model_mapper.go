@@ -7,7 +7,7 @@ import (
 	gormentities "auptex.com/botnova/internals/infrastructure/persistence/gorm/entities"
 )
 
-func ToDomainRobotModel(e gormentities.RobotModel) models.RobotModel {
+func ToRobotModelDomain(e gormentities.RobotModel) models.RobotModel {
 
 	model := models.RobotModel{
 		Id:        e.Id,
@@ -24,7 +24,7 @@ func ToDomainRobotModel(e gormentities.RobotModel) models.RobotModel {
 	return model
 }
 
-func ToEntityRobotModel(m models.RobotModel) gormentities.RobotModel {
+func ToRobotModelEntity(m models.RobotModel) gormentities.RobotModel {
 	commandsBytes, _ := json.Marshal(m.Commands)
 	commandjson := string(commandsBytes)
 

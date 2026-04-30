@@ -19,7 +19,7 @@ func NewProjectRepository(db *gorm.DB) *ProjectRepository {
 // Create(project models.Project) error
 func (r *ProjectRepository) Create(project models.Project) error {
 	project.Id = uuid.Must(uuid.NewV7()).String()
-	entity := entity_mappers.ToEntity(project)
+	entity := entity_mappers.ToProjectEntity(project)
 	return r.db.Create(&entity).Error
 }
 
@@ -30,13 +30,13 @@ func (r *ProjectRepository) GetById(id string) (*models.Project, error) {
 		return nil, err
 	}
 
-	data := entity_mappers.ToDomain(entity)
+	data := entity_mappers.ToProjectDomain(entity)
 	return &data, nil
 }
 
 // Update(m models.Project) error
 func (r *ProjectRepository) Update(project models.Project) error {
-	entity := entity_mappers.ToEntity(project)
+	entity := entity_mappers.ToProjectEntity(project)
 	return r.db.Save(&entity).Error
 }
 
@@ -55,7 +55,7 @@ func (r *ProjectRepository) GetByUserId(userId string) ([]models.Project, error)
 	var result []models.Project
 
 	for _, e := range entities {
-		result = append(result, entity_mappers.ToDomain(e))
+		result = append(result, entity_mappers.ToProjectDomain(e))
 	}
 
 	return result, nil
