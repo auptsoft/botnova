@@ -10,6 +10,7 @@ type Dependencies struct {
 	EventBus      ports.EventBus
 	ServiceLogger ports.Logger
 	WsTransport   ports.EventTransport
+	AuthConfig    services.AuthConfig
 
 	//Repositories
 	ProjectRepository repositorydefinitions.ProjectRepository

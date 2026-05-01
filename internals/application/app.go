@@ -23,7 +23,7 @@ func StartAppServer(addr string, deps *dependencies.Dependencies) *App {
 
 	//Set service dependencies
 	deps.ProjectService = services.NewProjectService(deps.ProjectRepository, app.logger)
-	deps.UserService = services.NewUserService(deps.UserRepository, app.logger)
+	deps.UserService = services.NewUserService(deps.UserRepository, app.logger, deps.AuthConfig)
 	deps.TransportService = services.NewTransportService(deps.WsTransport, app.logger)
 
 	app.wsServer = adapters.InitWebsocket(deps.EventBus, deps.ServiceLogger)

@@ -27,18 +27,28 @@ func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *g
 	//Add scalar docs endpoint
 	router.GET("/docs", handlers.ScalarDocsHandler)
 
-	// Apply middleware
-	router.Use(middlewares.AuthMiddleware())
 	// Health check endpoint
 	router.GET("/health", handlers.HealthHandler)
 
+	userHandler := handlers.NewUserHandler(deps.UserService)
+
 	//Api Routes
 	apiRoutes := router.Group("/api")
-	// websocket endpoint
-	{
-		apiRoutes.GET("/ws", wsServer.HandleWebSocket)
 
-		projectRoutes := apiRoutes.Group("/project")
+	// Public user auth routes
+	userPublicRoutes := apiRoutes.Group("/user")
+	{
+		userPublicRoutes.POST("/signup", userHandler.SignUp)
+		userPublicRoutes.POST("/login", userHandler.Login)
+	}
+
+	// Protected API routes
+	protectedRoutes := apiRoutes.Group("")
+	protectedRoutes.Use(middlewares.AuthMiddleware())
+	{
+		protectedRoutes.GET("/ws", wsServer.HandleWebSocket)
+
+		projectRoutes := protectedRoutes.Group("/project")
 		{
 			projectHandler := handlers.NewProjectHandler(deps.ProjectService)
 
@@ -49,20 +59,18 @@ func SetupRouter(deps *dependencies.Dependencies, wsServer *websocket.Server) *g
 			projectRoutes.DELETE("/:id", projectHandler.Delete)
 		}
 
-		userRoutes := apiRoutes.Group("/user")
+		userProtectedRoutes := protectedRoutes.Group("/user")
 		{
-			userHandler := handlers.NewUserHandler(deps.UserService)
-
-			userRoutes.POST("/", userHandler.CreateUser)
-			userRoutes.GET("/:id", userHandler.GetByID)
-			userRoutes.PUT("/", userHandler.UpdateUser)
-			userRoutes.DELETE("/:id", userHandler.Delete)
+			userProtectedRoutes.GET("/me", userHandler.GetCurrentUser)
+			userProtectedRoutes.PUT("/me", userHandler.UpdateCurrentUser)
+			userProtectedRoutes.PUT("/me/change-password", userHandler.ChangePassword)
+			userProtectedRoutes.DELETE("/me", userHandler.DeleteCurrentUser)
+			userProtectedRoutes.GET("/:id", userHandler.GetByID)
 		}
 
-		transportRoutes := apiRoutes.Group("/transport")
+		transportRoutes := protectedRoutes.Group("/transport")
 		{
 			transportHandler := handlers.NewTransportHandler(deps.TransportService)
-
 			transportRoutes.POST("/websocket", transportHandler.SendToWebsocket)
 		}
 	}
