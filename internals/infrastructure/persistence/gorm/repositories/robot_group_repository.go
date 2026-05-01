@@ -61,16 +61,12 @@ func (rgr *RobotGroupRepository) GetByUserId(userId string) ([]models.RobotGroup
 	return result, nil
 }
 
-func (rgr *RobotGroupRepository) GetByRobotId(robotId string) ([]models.RobotGroup, error) {
-	var entities []entities.RobotGroup
-	if err := rgr.db.Find(&entities, "id IN (SELECT group_id FROM robot_group_members WHERE robot_id = ?)", robotId).Error; err != nil {
+func (rgr *RobotGroupRepository) GetByRobotId(robotId string) (*models.RobotGroup, error) {
+	var entity entities.RobotGroup
+	if err := rgr.db.First(&entity, "id IN (SELECT group_id FROM robot_group_members WHERE robot_id = ?)", robotId).Error; err != nil {
 		return nil, err
 	}
 
-	var result []models.RobotGroup
-
-	for _, e := range entities {
-		result = append(result, entity_mappers.ToRobotGroupDomain(e))
-	}
-	return result, nil
+	data := entity_mappers.ToRobotGroupDomain(entity)
+	return &data, nil
 }

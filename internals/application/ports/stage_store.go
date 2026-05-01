@@ -8,9 +8,6 @@ type StateStore interface {
 	SetRobotState(state *models.RobotState)
 
 	// Group-level
-	GetGroupState(groupID string) (map[string]interface{}, bool)
-	SetGroupState(groupID string, state map[string]interface{})
-
-	// Subscription (optional for future)
-	SubscribeRobot(robotID string, ch chan *models.RobotState)
+	GetGroupState(groupID string) (*models.RobotState, bool)
+	SetGroupState(groupID string, state *models.RobotState)
 }

@@ -23,6 +23,8 @@ type Dependencies struct {
 	RobotGroupMemberRepository repositorydefinitions.RobotGroupMemberRepository
 	CalibrationRepository      repositorydefinitions.CalibrationRepository
 
+	StateStore ports.StateStore
+
 	//Services
 	ProjectService   *services.ProjectService
 	UserService      *services.UserService

@@ -8,4 +8,5 @@ type RobotGroupRepository interface {
 	Update(m *models.RobotGroup) error
 	Delete(id string) error
 	GetByUserId(id string) ([]models.RobotGroup, error)
+	GetByRobotId(robotId string) (*models.RobotGroup, error)
 }
