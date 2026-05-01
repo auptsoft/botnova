@@ -27,10 +27,10 @@ func (s *MemoryStateStore) GetRobotState(robotId string) (*models.RobotState, bo
 	return state, exists
 }
 
-func (s *MemoryStateStore) SetRobotState(robotId string, state *models.RobotState) {
+func (s *MemoryStateStore) SetRobotState(state *models.RobotState) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.robotStates[robotId] = state
+	s.robotStates[state.RobotId] = state
 }
 
 func (s *MemoryStateStore) GetGroupState(groupId string) (*models.RobotState, bool) {

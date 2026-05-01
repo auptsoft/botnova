@@ -15,6 +15,7 @@ import (
 	"auptex.com/botnova/internals/infrastructure/logger"
 	"auptex.com/botnova/internals/infrastructure/persistence/gorm"
 	"auptex.com/botnova/internals/infrastructure/persistence/gorm/repositories"
+	"auptex.com/botnova/internals/infrastructure/state"
 	"auptex.com/botnova/internals/infrastructure/transport/websocket"
 	"github.com/joho/godotenv"
 )
@@ -77,9 +78,9 @@ func main() {
 		RobotGroupRepository:       repositories.NewRobotGroupRepository(db),
 		RobotGroupMemberRepository: repositories.NewRobotGroupMemberRepository(db),
 		CalibrationRepository:      repositories.NewCalibrationRepository(db),
-		ProjectRepository: repositories.NewProjectRepository(db),
-		UserRepository:    repositories.NewUserRepository(db),
-		AuthConfig:        *authConfig,
+		AuthConfig:                 *authConfig,
+
+		StateStore: state.NewMemoryStateStore(),
 	}
 
 	log.Info("Starting botnova server...")

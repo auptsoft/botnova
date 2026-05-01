@@ -6,6 +6,7 @@ import (
 	"auptex.com/botnova/internals/application/ports"
 	"auptex.com/botnova/internals/application/ports/dependencies"
 	"auptex.com/botnova/internals/application/services"
+	"auptex.com/botnova/internals/application/state"
 	"auptex.com/botnova/internals/infrastructure/transport/websocket"
 )
 
@@ -27,6 +28,10 @@ func StartAppServer(addr string, deps *dependencies.Dependencies) *App {
 	deps.TransportService = services.NewTransportService(deps.WsTransport, app.logger)
 
 	app.wsServer = adapters.InitWebsocket(deps.EventBus, deps.ServiceLogger)
+
+	robotStateUpdater := state.NewRobotStateUpdater(deps.RobotGroupRepository, deps.StateStore, app.logger)
+	stateListener := adapters.NewRobotStateListener(robotStateUpdater, deps.EventBus, app.logger)
+	stateListener.Start()
 
 	router := api.SetupRouter(deps, app.wsServer)
 
