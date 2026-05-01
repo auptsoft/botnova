@@ -3,9 +3,10 @@ package entities
 import "time"
 
 type User struct {
-	Id        int `gorm:"primaryKey"`
+	Id        string `gorm:"primaryKey"`
 	Name      string
 	Email     string `gorm:"uniqueIndex"`
+	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

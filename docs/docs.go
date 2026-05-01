@@ -129,9 +129,9 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/user": {
-            "put": {
-                "description": "Update existing user",
+        "/api/user/login": {
+            "post": {
+                "description": "Authenticate a user and return a JWT",
                 "consumes": [
                     "application/json"
                 ],
@@ -141,22 +141,79 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Update User",
+                "summary": "Login User",
                 "parameters": [
+                    {
+                        "description": "Login Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserLoginDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/user/me": {
+            "get": {
+                "description": "Retrieve the authenticated user's profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get Current User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "description": "Update the authenticated user's profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update Current User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "User Data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.UserDto"
+                            "$ref": "#/definitions/dtos.UserUpdateDto"
                         }
                     }
                 ],
                 "responses": {}
             },
-            "post": {
-                "description": "Create a new user",
+            "delete": {
+                "description": "Delete the authenticated user's account",
                 "consumes": [
                     "application/json"
                 ],
@@ -166,15 +223,74 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Create User",
+                "summary": "Delete Current User",
                 "parameters": [
                     {
-                        "description": "User Data",
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/user/me/change-password": {
+            "put": {
+                "description": "Change the authenticated user's password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Change Current User Password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Password Change Data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.UserDto"
+                            "$ref": "#/definitions/dtos.UserChangePasswordDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/user/signup": {
+            "post": {
+                "description": "Register a new user account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Sign Up User",
+                "parameters": [
+                    {
+                        "description": "Signup Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserSignupDto"
                         }
                     }
                 ],
@@ -196,30 +312,7 @@ const docTemplate = `{
                 "summary": "Get User by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            },
-            "delete": {
-                "description": "Delete a user by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Delete User",
-                "parameters": [
-                    {
-                        "type": "integer",
+                        "type": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
@@ -249,22 +342,66 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "UserId": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
-        "dtos.UserDto": {
+        "dtos.UserChangePasswordDto": {
+            "type": "object",
+            "required": [
+                "CurrentPassword",
+                "NewPassword"
+            ],
+            "properties": {
+                "CurrentPassword": {
+                    "type": "string"
+                },
+                "NewPassword": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "dtos.UserLoginDto": {
             "type": "object",
             "required": [
                 "Email",
-                "Name"
+                "Password"
             ],
             "properties": {
                 "Email": {
                     "type": "string"
                 },
-                "Id": {
-                    "type": "integer"
+                "Password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UserSignupDto": {
+            "type": "object",
+            "required": [
+                "Email",
+                "Name",
+                "Password"
+            ],
+            "properties": {
+                "Email": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "dtos.UserUpdateDto": {
+            "type": "object",
+            "properties": {
+                "Email": {
+                    "type": "string"
                 },
                 "Name": {
                     "type": "string"

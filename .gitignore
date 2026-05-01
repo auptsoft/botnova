@@ -1,5 +1,6 @@
-
 db.sqlite
 db2.sqlite
 logs/
 /server
+.env*
+!.env.example
