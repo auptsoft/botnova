@@ -68,6 +68,15 @@ func main() {
 		WsTransport:   websocket.NewWebsocketTransport(eventBus),
 
 		//Repositories
+		ProjectRepository:          repositories.NewProjectRepository(db),
+		UserRepository:             repositories.NewUserRepository(db),
+		RobotRepository:            repositories.NewRobotRepository(db),
+		RobotModelRepository:       repositories.NewRobotModelRepository(db),
+		ScriptRepository:           repositories.NewScriptRepository(db),
+		RobotEndpointRepository:    repositories.NewRobotEndpointRepository(db),
+		RobotGroupRepository:       repositories.NewRobotGroupRepository(db),
+		RobotGroupMemberRepository: repositories.NewRobotGroupMemberRepository(db),
+		CalibrationRepository:      repositories.NewCalibrationRepository(db),
 		ProjectRepository: repositories.NewProjectRepository(db),
 		UserRepository:    repositories.NewUserRepository(db),
 		AuthConfig:        *authConfig,

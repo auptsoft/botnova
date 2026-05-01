@@ -5,10 +5,10 @@ import (
 	gormentities "auptex.com/botnova/internals/infrastructure/persistence/gorm/entities"
 )
 
-func ToDomainScript(e gormentities.Script) models.Script {
+func ToScriptDomain(e gormentities.Script) models.Script {
 	return models.Script{
 		Id:        e.Id,
-		ProjectID: e.ProjectID,
+		ProjectID: e.ProjectId,
 		Name:      e.Name,
 		Type:      e.Type,
 		Content:   e.Content,
@@ -17,10 +17,10 @@ func ToDomainScript(e gormentities.Script) models.Script {
 	}
 }
 
-func ToEntityRobotScript(m models.Script) gormentities.Script {
+func ToScriptEntity(m models.Script) gormentities.Script {
 	return gormentities.Script{
 		Id:        m.Id,
-		ProjectID: m.ProjectID,
+		ProjectId: m.ProjectID,
 		Name:      m.Name,
 		Type:      m.Type,
 		Content:   m.Content,

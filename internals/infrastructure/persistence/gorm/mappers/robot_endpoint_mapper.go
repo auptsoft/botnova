@@ -5,7 +5,7 @@ import (
 	gormentities "auptex.com/botnova/internals/infrastructure/persistence/gorm/entities"
 )
 
-func ToDomainRobotEndpoint(e gormentities.RobotEndpoint) models.RobotEndpoint {
+func ToRobotEndpointDomain(e gormentities.RobotEndpoint) models.RobotEndpoint {
 	return models.RobotEndpoint{
 		Id:        e.Id,
 		RobotID:   e.RobotID,
@@ -17,7 +17,7 @@ func ToDomainRobotEndpoint(e gormentities.RobotEndpoint) models.RobotEndpoint {
 	}
 }
 
-func ToEntityRobotEndpoint(m models.RobotEndpoint) gormentities.RobotEndpoint {
+func ToRobotEndpointEntity(m models.RobotEndpoint) gormentities.RobotEndpoint {
 	return gormentities.RobotEndpoint{
 		Id:        m.Id,
 		RobotID:   m.RobotID,
